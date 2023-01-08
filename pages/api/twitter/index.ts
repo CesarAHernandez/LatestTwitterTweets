@@ -5,15 +5,18 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 axios.defaults.headers.common['authorization'] = `Bearer ${process.env.TWITTER_BEARER_TOKEN}`
 
 type Data = {
-    name: string
-}
+    tweets: Tweet[],
+    message?: any
 
-interface TwitterResponse {
-    data: {
+}
+interface Tweet {
         edit_history_tweet_ids: string[],
         id: string,
         text: string
-    }[],
+}
+
+interface TwitterResponse {
+    data: Tweet[],
     meta: {
         newest_id: string,
         oldest_id: string,
@@ -54,6 +57,6 @@ export default async function handler(
         const twitterResponse = await getLatestTweets(20, ["#react", "#cloud"])
         res.status(200).json({tweets: twitterResponse.data})
     } catch (err: any) {
-        res.status(400).json({ message: err.message })
+        res.status(400).json({ tweets: [],message: err.message })
     }
 }
